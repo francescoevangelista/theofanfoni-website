@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>THEO FANFONI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+
+    :root{
+      --bk:#0a0a0a; --wh:#ebe8e2; --dm:#7a7a76; --ft:#4a4a47; --ln:#222220;
+      --f:'Helvetica Neue',Helvetica,Arial,sans-serif;
+      --d:'Poppins',var(--f);
+      --p:36px;
+    }
+    @media(max-width:600px){:root{--p:20px}}
+
+    html{height:100%}
+    body{
+      background:var(--bk); color:var(--wh);
+      font-family:var(--f); font-size:12px; line-height:1.5;
+      height:100%; overflow:hidden;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      text-transform:uppercase;
+    }
+    @media(hover:hover)and(pointer:fine){body{cursor:none}.ct{cursor:none}}
+
+    #cur{position:fixed;width:5px;height:5px;background:var(--wh);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;display:none}
+    @media(hover:hover)and(pointer:fine){#cur{display:block}}
+    #cur.big{width:40px;height:40px;background:rgba(235,232,226,.07)}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:600;display:flex;justify-content:space-between;align-items:center;padding:26px var(--p);mix-blend-mode:difference}
+    @media(max-width:600px){nav{padding:20px var(--p)}}
+    .logo{font-family:var(--d);font-weight:200;font-size:11px;letter-spacing:.18em;color:var(--wh);background:none;border:none}
+    .logo:hover{opacity:.55}
+    #btn-menu{background:none;border:none;font-family:var(--f);font-size:10px;letter-spacing:.18em;color:var(--wh)}
+    #btn-menu:hover{opacity:.55}
+
+    /* MENU */
+    #menu{position:fixed;inset:0;z-index:550;background:var(--bk);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 var(--p);opacity:0;pointer-events:none;transition:opacity .5s}
+    #menu.on{opacity:1;pointer-events:all}
+    .mr{overflow:hidden;margin:6px 0}
+    .ml{font-family:var(--d);font-weight:200;font-size:clamp(32px,6.5vw,68px);letter-spacing:.01em;line-height:1.12;color:var(--wh);opacity:.92;border:none;background:none;padding:0;display:block;text-align:left;transition:opacity .3s,transform .6s cubic-bezier(.16,1,.3,1);transform:translateY(105%)}
+    #menu.on .ml{transform:translateY(0)}
+    #menu.on .mr:nth-child(1) .ml{transition-delay:.05s}
+    #menu.on .mr:nth-child(2) .ml{transition-delay:.1s}
+    #menu.on .mr:nth-child(3) .ml{transition-delay:.15s}
+    #menu.on .mr:nth-child(4) .ml{transition-delay:.2s}
+    .ml:hover{opacity:.4}
+    .mi{font-family:var(--f);font-size:9px;letter-spacing:.1em;color:var(--ft);vertical-align:super;margin-right:16px}
+
+    /* SECTIONS */
+    .sec{position:fixed;inset:0;opacity:0;pointer-events:none;transition:opacity .5s;overflow:hidden}
+    .sec.on{opacity:1;pointer-events:all;z-index:10}
+
+    /* HOME */
+    #home{background:#000}
+    .vw{position:absolute;inset:0;overflow:hidden;z-index:1;background:#000}
+    .vw video{position:absolute;top:50%;left:50%;width:100%;height:100%;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none}
+    @media(max-width:600px){.vw video{object-fit:cover}}
+    .vv{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 90% 70% at 50% 50%,transparent 40%,rgba(0,0,0,.4) 100%);pointer-events:none}
+    .ht{position:absolute;inset:0;z-index:3;display:flex;justify-content:center;align-items:center;padding:0 20px}
+    .hb{font-family:var(--d);font-weight:200;font-size:clamp(28px,7.5vw,88px);letter-spacing:.34em;line-height:1;opacity:.97;text-indent:.34em;text-align:center}
+    @media(max-width:600px){.hb{font-size:24px;letter-spacing:.26em;text-indent:.26em}}
+
+    /* LOOKBOOK */
+    #lookbook{overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .lbi{padding:110px var(--p) 40px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--ln)}
+    .lbt{font-family:var(--d);font-weight:200;font-size:clamp(24px,4.5vw,44px);letter-spacing:.01em;line-height:1}
+    .lbm{text-align:right;font-size:9px;letter-spacing:.18em;color:var(--dm);line-height:2}
+    @media(max-width:600px){.lbi{padding:90px var(--p) 24px;flex-direction:column;align-items:flex-start;gap:14px}.lbm{text-align:left}}
+
+    .lg{display:grid;grid-template-columns:repeat(3,1fr)}
+    @media(max-width:760px){.lg{grid-template-columns:1fr 1fr}}
+
+    /* ═══════════════════════════════════════════════════════
+       LOOKBOOK TILE — foto INTERE, non tagliate.
+       Il rapporto 2:3 rispecchia le foto verticali di moda,
+       object-fit: contain mostra tutta la persona (testa+piedi)
+       centrata su sfondo nero, che è coerente col fondale scuro
+       degli scatti. Niente più tagli su piedi/scarpe.
+       ═══════════════════════════════════════════════════════ */
+    .lk{
+      position:relative;
+      aspect-ratio:2/3;
+      background:#000;
+      overflow:hidden;
+      border-right:1px solid var(--ln);
+      border-bottom:1px solid var(--ln);
+    }
+    .lk img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+      opacity:0;
+      transition:opacity .8s;
+    }
+    .lk img.ld{opacity:1}
+    .lk::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;transition:opacity .3s;pointer-events:none}
+    @media(hover:hover){.lk:hover::after{opacity:1}}
+    .lk-n{position:absolute;top:12px;left:14px;z-index:2;font-size:9px;letter-spacing:.15em;color:var(--wh);mix-blend-mode:difference;transition:opacity .4s}
+    @media(hover:hover){.lk:hover .lk-n{opacity:.4}}
+
+    /* MODAL */
+    #modal{position:fixed;inset:0;z-index:700;background:#000;display:none}
+    #modal.on{display:flex}
+    .m-nav{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:22px var(--p);mix-blend-mode:difference}
+    .m-id{font-size:9px;letter-spacing:.15em;color:#fff}
+    .m-cls{background:none;border:none;font-family:var(--f);font-size:10px;letter-spacing:.18em;color:#fff}
+    .m-cls:hover{opacity:.6}
+    .m-body{display:flex;width:100%;height:100%}
+    .m-photo{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:#000;padding:60px 20px 40px}
+    /* Foto piena visibile, mai tagliata */
+    .m-photo img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;opacity:0;transition:opacity .4s}
+    .m-photo img.ld{opacity:1}
+    .m-tap{position:absolute;top:0;bottom:0;width:40%;z-index:5;border:none;background:none}
+    .m-tap.l{left:0}
+    .m-tap.r{right:0}
+    .m-spec{width:280px;border-left:1px solid var(--ln);padding:90px 24px 30px;overflow-y:auto;font-size:9px;letter-spacing:.1em;line-height:2;color:var(--dm)}
+    .m-spec-title{color:var(--wh);font-size:10px;letter-spacing:.12em;margin-bottom:20px}
+    .m-spec-item{border-bottom:1px solid var(--ln);padding:14px 0}
+    .m-spec-name{color:var(--wh);margin-bottom:2px}
+    @media(max-width:800px){.m-spec{display:none}}
+    .m-dots{position:absolute;bottom:20px;left:0;right:280px;z-index:10;display:flex;gap:6px;justify-content:center}
+    @media(max-width:800px){.m-dots{right:0}}
+    .m-dot{width:4px;height:4px;border-radius:50%;background:rgba(235,232,226,.25);transition:background .3s}
+    .m-dot.on{background:var(--wh)}
+    .m-arr-h{position:absolute;top:50%;z-index:9;font-size:18px;color:#fff;opacity:0;transition:opacity .3s;pointer-events:none;mix-blend-mode:difference}
+    .m-tap:hover .m-arr-h{opacity:.5}
+    .m-tap.l .m-arr-h{left:var(--p)}
+    .m-tap.r .m-arr-h{right:var(--p)}
+
+    /* PRIVATE ORDER */
+    #po{display:flex;align-items:center;justify-content:center;padding:80px var(--p) 40px;overflow-y:auto}
+    .po-c{max-width:480px;width:100%;text-align:center}
+    .po-h{font-family:var(--d);font-weight:200;font-size:clamp(32px,5vw,56px);letter-spacing:.01em;line-height:1;margin-bottom:50px}
+    .po-t{font-size:12px;line-height:2;color:var(--dm);letter-spacing:.1em;margin-bottom:50px;max-width:380px;margin-left:auto;margin-right:auto}
+    .po-links{display:flex;flex-direction:column;gap:12px}
+    .po-btn{display:flex;align-items:center;justify-content:center;gap:12px;padding:18px;border:1px solid var(--ln);color:var(--wh);font-family:var(--f);font-size:10px;letter-spacing:.2em;text-decoration:none;transition:.4s}
+    .po-btn:hover{background:var(--wh);color:var(--bk);border-color:var(--wh)}
+    .po-btn .ar{transition:transform .4s}
+    .po-btn:hover .ar{transform:translateX(6px)}
+
+    /* ARCHIVE */
+    #archive{overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .arc-hd{padding:110px var(--p) 0;display:flex;justify-content:space-between;align-items:flex-start}
+    .arc-t{font-family:var(--d);font-weight:200;font-size:clamp(24px,4.5vw,44px);letter-spacing:.01em;line-height:1}
+    .arc-tabs{display:flex;gap:24px;padding-top:8px}
+    .atab{font-size:9px;letter-spacing:.15em;color:var(--ft);background:none;border:none;font-family:var(--f);transition:color .3s;position:relative;padding-bottom:4px}
+    .atab.on{color:var(--wh)}
+    .atab.on::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--wh)}
+    @media(max-width:600px){.arc-hd{flex-direction:column;gap:20px;padding:90px var(--p) 0}}
+    .arc-pane{display:none;padding-top:40px}
+    .arc-pane.on{display:block}
+    .arc-list{border-top:1px solid var(--ln)}
+    .arc-row{display:flex;align-items:center;justify-content:space-between;padding:24px var(--p);border-bottom:1px solid var(--ln);transition:background .4s,padding-left .4s}
+    .arc-row:hover{background:#101010;padding-left:calc(var(--p) + 12px)}
+    .arc-row-l{display:flex;align-items:baseline;gap:20px}
+    .arc-row-i{font-size:8px;color:var(--ft);letter-spacing:.1em;min-width:20px}
+    .arc-row-n{font-family:var(--d);font-weight:200;font-size:clamp(16px,2.5vw,26px);letter-spacing:.01em}
+    .arc-row .ar{opacity:0;transition:opacity .3s,transform .3s;transform:translateX(-8px);font-size:12px;color:var(--wh)}
+    .arc-row:hover .ar{opacity:1;transform:translateX(0)}
+    .arc-empty{padding:24px var(--p);font-size:10px;letter-spacing:.1em;color:var(--ft)}
+
+    /* ARCHIVE DETAIL */
+    #arc-detail{position:fixed;inset:0;z-index:500;background:var(--bk);display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    #arc-detail.on{display:block}
+    .ad-top{padding:90px var(--p) 30px;display:flex;align-items:flex-start;justify-content:space-between}
+    .ad-back{background:none;border:none;font-family:var(--f);font-size:10px;letter-spacing:.18em;color:var(--wh)}
+    .ad-back:hover{opacity:.6}
+    .ad-meta{display:flex;gap:30px;flex-wrap:wrap;padding:0 var(--p) 30px;font-size:9px;letter-spacing:.12em;color:var(--dm)}
+    .ad-meta span{padding-right:20px}
+    @media(max-width:600px){.ad-meta{gap:14px}.ad-meta span{padding-right:0}}
+
+    /* Griglia progetti archivio — foto INTERE su sfondo nero */
+    .ad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:0}
+    @media(max-width:700px){.ad-grid{grid-template-columns:1fr 1fr}}
+    .ad-img{
+      position:relative;
+      aspect-ratio:2/3;
+      background:#000;
+      overflow:hidden;
+    }
+    .ad-img img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      opacity:0;
+      transition:opacity .6s;
+    }
+    .ad-img img.ld{opacity:1}
+
+    /* SPECIAL PROJECTS */
+    #special{overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .sp-hd{padding:110px var(--p) 10px}
+    .sp-t{font-family:var(--d);font-weight:200;font-size:clamp(24px,4.5vw,44px);letter-spacing:.01em;line-height:1}
+    .sp-sub{font-size:9px;letter-spacing:.15em;color:var(--dm);margin-top:10px}
+    .sp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:30px}
+    @media(max-width:700px){.sp-grid{grid-template-columns:1fr 1fr}}
+    .sp-item{position:relative;aspect-ratio:2/3;background:#000;overflow:hidden}
+    .sp-item img{width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .6s}
+    .sp-item img.ld{opacity:1}
+    .sp-empty{padding:60px var(--p);font-size:10px;letter-spacing:.15em;color:var(--ft);text-align:center}
+
+    /* FOOTER */
+    #footer{padding:80px var(--p) 40px;border-top:1px solid var(--ln);margin-top:60px}
+    .ft-title{font-size:9px;letter-spacing:.2em;color:var(--dm);margin-bottom:30px}
+    .ft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+    @media(max-width:700px){.ft-grid{grid-template-columns:1fr}}
+    .ft-col{font-size:10px;letter-spacing:.1em;line-height:2.2}
+    .ft-col a{color:var(--wh);text-decoration:none;transition:opacity .3s}
+    .ft-col a:hover{opacity:.5}
+    .ft-label{color:var(--dm);font-size:9px;letter-spacing:.15em;margin-bottom:6px}
+
+    ::-webkit-scrollbar{width:0;height:0}
+  </style>
+</head>
+
+<body>
+  <div id="cur"></div>
+
+  <nav>
+    <button class="logo ct" onclick="navTo('home')">THEO FANFONI</button>
+    <button id="btn-menu" class="ct" onclick="toggleMenu()">MENU</button>
+  </nav>
+
+  <div id="menu">
+    <div class="mr"><button class="ml ct" onclick="navTo('lookbook')"><span class="mi">01</span>FORCE OF HABIT</button></div>
+    <div class="mr"><button class="ml ct" onclick="navTo('po')"><span class="mi">02</span>PRIVATE ORDER</button></div>
+    <div class="mr"><button class="ml ct" onclick="navTo('archive')"><span class="mi">03</span>ARCHIVE</button></div>
+    <div class="mr"><button class="ml ct" onclick="navTo('special')"><span class="mi">04</span>SPECIAL PROJECTS</button></div>
+  </div>
+
+  <section class="sec on" id="home">
+    <div class="vw">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="theo-ss26.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="vv"></div>
+    <div class="ht"><div class="hb">THEO FANFONI</div></div>
+  </section>
+
+  <section class="sec" id="lookbook">
+    <div class="lbi">
+      <div class="lbt">FORCE OF HABIT</div>
+      <div class="lbm">SPRING SUMMER 2026<br>LOOKBOOK</div>
+    </div>
+    <div class="lg" id="lbGrid"></div>
+  </section>
+
+  <div id="modal">
+    <div class="m-nav">
+      <div class="m-id" id="mId">LOOK 01</div>
+      <button class="m-cls ct" onclick="closeModal()">CLOSE</button>
+    </div>
+    <div class="m-body">
+      <div class="m-photo">
+        <img id="mImg" alt="">
+        <button class="m-tap l ct" onclick="shiftPhoto(-1)"><span class="m-arr-h" style="transform:translateY(-50%)">&#8592;</span></button>
+        <button class="m-tap r ct" onclick="shiftPhoto(1)"><span class="m-arr-h" style="transform:translateY(-50%)">&#8594;</span></button>
+      </div>
+      <div class="m-spec" id="mSpec"></div>
+    </div>
+    <div class="m-dots" id="mDots"></div>
+  </div>
+
+  <section class="sec" id="po">
+    <div class="po-c">
+      <div class="po-h">PRIVATE ORDER</div>
+      <div class="po-t">EACH PIECE IS MADE TO ORDER. FABRICS CHANGE, MEASUREMENTS ARE TAKEN, EVERYTHING IS BUILT DIRECTLY WITH YOU.</div>
+      <div class="po-links">
+        <a href="https://instagram.com/theofanfoni" target="_blank" class="po-btn ct"><span>WRITE ON INSTAGRAM</span><span class="ar">&#8594;</span></a>
+        <a href="mailto:info@teofanfoni.com" class="po-btn ct"><span>INFO@TEOFANFONI.COM</span><span class="ar">&#8594;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="archive">
+    <div class="arc-hd">
+      <div class="arc-t">ARCHIVE</div>
+      <div class="arc-tabs">
+        <button class="atab on ct" onclick="arcTab('projects',this)">PROJECTS</button>
+        <button class="atab ct" onclick="arcTab('garments',this)">GARMENTS</button>
+      </div>
+    </div>
+    <div class="arc-pane on" id="projects"><div class="arc-list" id="pList"></div></div>
+    <div class="arc-pane" id="garments"><div class="arc-list" id="gList"></div></div>
+  </section>
+
+  <div id="arc-detail">
+    <div class="ad-top"><button class="ad-back ct" onclick="closeDetail()">&#8592; BACK</button></div>
+    <div class="ad-meta" id="adMeta"></div>
+    <div class="ad-grid" id="adGrid"></div>
+  </div>
+
+  <section class="sec" id="special">
+    <div class="sp-hd">
+      <div class="sp-t">SPECIAL PROJECTS</div>
+      <div class="sp-sub">ORSINI GROUP</div>
+    </div>
+    <div class="sp-empty">COMING SOON</div>
+    <div id="spFooter"></div>
+  </section>
+
+<script>
+// ═════════ CONFIG ═════════
+const LOOK_DIR = 'looks/';
+const LOOK_IDS = [1,2,3,4,6,7,8,9,10,11,12,13,14]; // 05 = duplicate of 02
+const PHOTOS_PER_LOOK = 5;
+const IG = 'theofanfoni';
+
+// ═══════════════════════════════════════════════════════════
+//  PROGETTI ARCHIVIO
+//  I nomi file rispecchiano ESATTAMENTE quelli sull'hard disk:
+//  - fenced_city:  fenced_city1.jpg ... fenced_city12.jpg
+//  - studio4:      studio1.jpg ... studio5.jpg
+//  - permeabile, uriel, occhi: cartelle ancora vuote → placeholder
+// ═══════════════════════════════════════════════════════════
+const PROJECTS = [
+  { folder:'permeabile', prefix:'permeabile',  digitPad:false, name:'PERMEABILE',
+    meta:['_PERMEABILE','VIDEO PERFORMANCE','ART DIRECTION','2025'], imgs:0 },
+  { folder:'fenced_city', prefix:'fenced_city', digitPad:false, name:'FENCED CITY CAPSULE COLLECTION',
+    meta:['_FENCED CITY','CAPSULE COLLECTION','ART DIRECTION / FASHION DESIGN','ROMA \'25'], imgs:12 },
+  { folder:'uriel',       prefix:'uriel',       digitPad:false, name:'URIEL',
+    meta:['_URIEL','FASHION DESIGN','2024'], imgs:0 },
+  { folder:'studio4',     prefix:'studio',      digitPad:false, name:'ST.4 SHOWROOM',
+    meta:['_ST.4','SHOWROOM DIRECTION','ROMA'], imgs:5 },
+  { folder:'occhi',       prefix:'occhi',       digitPad:false, name:'SOLO PER GLI OCCHI',
+    meta:['_SOLO PER GLI OCCHI','BRAND IDENTITY','2024'], imgs:0 },
+];
+
+// specs placeholder — Theo li riempirà
+const SPECS = {
+  1:[{name:'OVERSIZED JACKET',mat:'WOOL BLEND',col:'CHARCOAL'},{name:'DRAPED SKIRT',mat:'COTTON',col:'ASH'}],
+  2:[{name:'BUTTON-UP JACKET',mat:'FELTED WOOL',col:'ANTHRACITE'},{name:'WIDE TROUSERS',mat:'WOOL',col:'ANTHRACITE'}],
+  3:[{name:'PULLOVER SHIRT',mat:'COTTON CANVAS',col:'NATURAL'},{name:'STRAIGHT PANTS',mat:'COTTON',col:'BLACK'}],
+  4:[{name:'HOODED VEST',mat:'COTTON',col:'SLATE'},{name:'LOOSE PANTS',mat:'WOOL',col:'BLACK'}],
+  6:[{name:'WRAP COAT',mat:'WOOL',col:'GRAPHITE'},{name:'TAPERED TROUSERS',mat:'COTTON',col:'BLACK'}],
+  7:[{name:'CROPPED JACKET',mat:'LINEN BLEND',col:'ECRU'},{name:'PALAZZO PANTS',mat:'LINEN',col:'BLACK'}],
+  8:[{name:'COLLARLESS SHIRT',mat:'COTTON',col:'WHITE'},{name:'PLEATED PANTS',mat:'WOOL',col:'CHARCOAL'}],
+  9:[{name:'DECONSTRUCTED BLAZER',mat:'WOOL',col:'DARK GREY'},{name:'WIDE TROUSERS',mat:'WOOL',col:'DARK GREY'}],
+  10:[{name:'TUNIC',mat:'COTTON GAUZE',col:'OFF WHITE'},{name:'DRAWSTRING PANTS',mat:'COTTON',col:'BLACK'}],
+  11:[{name:'ASYMMETRIC JACKET',mat:'WOOL BLEND',col:'CHARCOAL'},{name:'SLIM TROUSERS',mat:'WOOL',col:'BLACK'}],
+  12:[{name:'OVERSIZED COAT',mat:'HEAVY WOOL',col:'ANTHRACITE'},{name:'STRAIGHT PANTS',mat:'COTTON',col:'BLACK'}],
+  13:[{name:'LAYERED VEST',mat:'COTTON',col:'STONE'},{name:'WIDE LEG PANTS',mat:'LINEN',col:'BLACK'}],
+  14:[{name:'STRUCTURED JACKET',mat:'CANVAS',col:'CHARCOAL'},{name:'CROPPED TROUSERS',mat:'WOOL',col:'BLACK'}],
+};
+
+// ══ CURSOR ══
+const cur = document.getElementById('cur');
+if(window.matchMedia('(hover:hover)and(pointer:fine)').matches){
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top = e.clientY + 'px';
+  });
+}
+function addHover(){
+  document.querySelectorAll('.ct').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('big'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
+}
+
+// ══ NAVIGATION ══
+function go(id){
+  document.getElementById('arc-detail').classList.remove('on');
+  document.getElementById('modal').classList.remove('on');
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  const t = document.getElementById(id);
+  if(t){ t.classList.add('on'); t.scrollTop = 0; }
+}
+function navTo(id){ go(id); closeMenu(); }
+
+let menuOpen = false;
+function toggleMenu(){ menuOpen ? closeMenu() : openMenu(); }
+function openMenu(){
+  menuOpen = true;
+  document.getElementById('menu').classList.add('on');
+  document.getElementById('btn-menu').textContent = 'CLOSE';
+}
+function closeMenu(){
+  menuOpen = false;
+  document.getElementById('menu').classList.remove('on');
+  document.getElementById('btn-menu').textContent = 'MENU';
+}
+
+// ══ LAZY LOAD ══
+function lazyLoad(scope){
+  (scope || document).querySelectorAll('img[data-src]').forEach(img => {
+    const s = img.getAttribute('data-src');
+    img.removeAttribute('data-src');
+    img.onload = () => img.classList.add('ld');
+    img.onerror = () => { img.style.display = 'none'; };
+    img.src = s;
+  });
+}
+
+// ══ LOOKBOOK ══
+const lbGrid = document.getElementById('lbGrid');
+LOOK_IDS.forEach(id => {
+  const nn = String(id).padStart(2,'0');
+  const d = document.createElement('div');
+  d.className = 'lk ct';
+  d.innerHTML = `<img data-src="${LOOK_DIR}look${nn}-1.jpg" alt="Look ${nn}"><div class="lk-n">${nn}</div>`;
+  d.addEventListener('click', () => openModal(id));
+  lbGrid.appendChild(d);
+});
+
+// ══ MODAL LOOKBOOK ══
+let curLook = 1, curPhoto = 1;
+function openModal(look){
+  curLook = look; curPhoto = 1;
+  document.getElementById('modal').classList.add('on');
+  renderSpecs(look);
+  buildDots();
+  showPhoto();
+}
+function renderSpecs(look){
+  const items = SPECS[look] || [];
+  let h = `<div class="m-spec-title">LOOK ${String(look).padStart(2,'0')}</div>`;
+  items.forEach(it => {
+    h += `<div class="m-spec-item"><div class="m-spec-name">${it.name}</div>${it.mat}<br>COLOR: ${it.col}</div>`;
+  });
+  document.getElementById('mSpec').innerHTML = h;
+}
+function buildDots(){
+  const w = document.getElementById('mDots');
+  w.innerHTML = '';
+  for(let i = 1; i <= PHOTOS_PER_LOOK; i++){
+    const d = document.createElement('div');
+    d.className = 'm-dot' + (i === 1 ? ' on' : '');
+    w.appendChild(d);
+  }
+}
+function showPhoto(){
+  const nn = String(curLook).padStart(2,'0');
+  const img = document.getElementById('mImg');
+  img.classList.remove('ld');
+  img.onload = () => img.classList.add('ld');
+  img.onerror = () => { img.style.opacity = 0; };
+  img.src = `${LOOK_DIR}look${nn}-${curPhoto}.jpg`;
+  document.getElementById('mId').textContent = `LOOK ${nn}  /  ${curPhoto} OF ${PHOTOS_PER_LOOK}`;
+  document.querySelectorAll('.m-dot').forEach((d,i) => d.classList.toggle('on', i === curPhoto - 1));
+}
+function shiftPhoto(dir){
+  curPhoto += dir;
+  if(curPhoto > PHOTOS_PER_LOOK){
+    const idx = LOOK_IDS.indexOf(curLook);
+    curLook = LOOK_IDS[(idx + 1) % LOOK_IDS.length];
+    curPhoto = 1; renderSpecs(curLook); buildDots();
+  } else if(curPhoto < 1){
+    const idx = LOOK_IDS.indexOf(curLook);
+    curLook = LOOK_IDS[(idx - 1 + LOOK_IDS.length) % LOOK_IDS.length];
+    curPhoto = PHOTOS_PER_LOOK; renderSpecs(curLook); buildDots();
+  }
+  showPhoto();
+}
+function closeModal(){ document.getElementById('modal').classList.remove('on'); }
+document.addEventListener('keydown', e => {
+  if(!document.getElementById('modal').classList.contains('on')) return;
+  if(e.key === 'ArrowRight') shiftPhoto(1);
+  if(e.key === 'ArrowLeft')  shiftPhoto(-1);
+  if(e.key === 'Escape')     closeModal();
+});
+
+// ══ ARCHIVE ══
+function renderProjects(){
+  const el = document.getElementById('pList');
+  PROJECTS.forEach((p,i) => {
+    const row = document.createElement('div');
+    row.className = 'arc-row ct';
+    row.innerHTML = `
+      <div class="arc-row-l">
+        <span class="arc-row-i">${String(i+1).padStart(2,'0')}</span>
+        <span class="arc-row-n">${p.name}</span>
+      </div>
+      <div><span class="ar">&#8594;</span></div>`;
+    row.addEventListener('click', () => openDetail(p));
+    el.appendChild(row);
+  });
+}
+function renderGarments(){
+  document.getElementById('gList').innerHTML = `<div class="arc-empty">COMING SOON</div>`;
+}
+renderProjects();
+renderGarments();
+
+function arcTab(id, el){
+  document.querySelectorAll('.atab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.arc-pane').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById(id).classList.add('on');
+}
+
+function openDetail(p){
+  const det = document.getElementById('arc-detail');
+  const meta = document.getElementById('adMeta');
+  const grid = document.getElementById('adGrid');
+  meta.innerHTML = p.meta.map(m => `<span>${m}</span>`).join('');
+  grid.innerHTML = '';
+
+  if(p.imgs === 0){
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:60px var(--p);text-align:center;font-size:10px;letter-spacing:.15em;color:var(--ft)">COMING SOON</div>`;
+  } else {
+    for(let i = 1; i <= p.imgs; i++){
+      const d = document.createElement('div');
+      d.className = 'ad-img';
+      d.innerHTML = `<img data-src="${p.folder}/${p.prefix}${i}.jpg" alt="${p.name} ${i}">`;
+      grid.appendChild(d);
+    }
+  }
+  det.classList.add('on');
+  det.scrollTop = 0;
+  lazyLoad(det);
+  addHover();
+}
+function closeDetail(){ document.getElementById('arc-detail').classList.remove('on'); }
+
+// ══ FOOTER ══
+function buildFooter(){
+  return `
+    <div id="footer">
+      <div class="ft-title">CONTACTS</div>
+      <div class="ft-grid">
+        <div class="ft-col">
+          <div class="ft-label">STUDIO</div>
+          VIA STATILIA 4<br>ROMA
+        </div>
+        <div class="ft-col">
+          <div class="ft-label">CONNECT</div>
+          <a href="https://wa.me/" target="_blank">WHATSAPP</a><br>
+          <a href="mailto:info@teofanfoni.com">INFO@TEOFANFONI.COM</a>
+        </div>
+        <div class="ft-col">
+          <div class="ft-label">FOLLOW</div>
+          <a href="https://instagram.com/${IG}" target="_blank">INSTAGRAM</a><br>
+          <a href="https://www.instagram.com/st.udio.4/" target="_blank">ST.UDIO.4 INSTAGRAM</a>
+        </div>
+      </div>
+    </div>`;
+}
+function injectFooter(sectionId){
+  const sec = document.getElementById(sectionId);
+  const w = document.createElement('div');
+  w.innerHTML = buildFooter();
+  sec.appendChild(w);
+}
+document.getElementById('spFooter').innerHTML = buildFooter();
+injectFooter('lookbook');
+injectFooter('archive');
+
+// ══ INIT ══
+lazyLoad();
+addHover();
+</script>
+</body>
+</html>
