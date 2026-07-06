@@ -86,9 +86,12 @@
        centrata su sfondo nero, che è coerente col fondale scuro
        degli scatti. Niente più tagli su piedi/scarpe.
        ═══════════════════════════════════════════════════════ */
+    /* Ratio 4/5 corrisponde alle foto (960x1200):
+       la foto riempie perfettamente il rettangolo,
+       niente bordi, niente tagli. */
     .lk{
       position:relative;
-      aspect-ratio:2/3;
+      aspect-ratio:4/5;
       background:#000;
       overflow:hidden;
       border-right:1px solid var(--ln);
@@ -97,10 +100,10 @@
     .lk img{
       width:100%;
       height:100%;
-      object-fit:contain;
+      object-fit:cover;
       display:block;
       opacity:0;
-      transition:opacity .8s;
+      transition:opacity .5s;
     }
     .lk img.ld{opacity:1}
     .lk::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;transition:opacity .3s;pointer-events:none}
@@ -184,16 +187,16 @@
     @media(max-width:700px){.ad-grid{grid-template-columns:1fr 1fr}}
     .ad-img{
       position:relative;
-      aspect-ratio:2/3;
+      aspect-ratio:4/5;
       background:#000;
       overflow:hidden;
     }
     .ad-img img{
       width:100%;
       height:100%;
-      object-fit:contain;
+      object-fit:cover;
       opacity:0;
-      transition:opacity .6s;
+      transition:opacity .5s;
     }
     .ad-img img.ld{opacity:1}
 
@@ -204,8 +207,8 @@
     .sp-sub{font-size:9px;letter-spacing:.15em;color:var(--dm);margin-top:10px}
     .sp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:30px}
     @media(max-width:700px){.sp-grid{grid-template-columns:1fr 1fr}}
-    .sp-item{position:relative;aspect-ratio:2/3;background:#000;overflow:hidden}
-    .sp-item img{width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .6s}
+    .sp-item{position:relative;aspect-ratio:4/5;background:#000;overflow:hidden}
+    .sp-item img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s}
     .sp-item img.ld{opacity:1}
     .sp-empty{padding:60px var(--p);font-size:10px;letter-spacing:.15em;color:var(--ft);text-align:center}
 
