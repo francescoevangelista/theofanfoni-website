@@ -77,7 +77,8 @@
     @media(max-width:600px){.lbi{padding:90px var(--p) 24px;flex-direction:column;align-items:flex-start;gap:14px}.lbm{text-align:left}}
 
     .lg{display:grid;grid-template-columns:repeat(3,1fr)}
-    @media(max-width:760px){.lg{grid-template-columns:1fr 1fr}}
+    @media(max-width:900px){.lg{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.lg{grid-template-columns:1fr}}
 
     /* ═══════════════════════════════════════════════════════
        LOOKBOOK TILE — foto INTERE, non tagliate.
@@ -114,13 +115,13 @@
     /* MODAL */
     #modal{position:fixed;inset:0;z-index:700;background:#000;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
     #modal.on{display:block}
-    .m-nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:22px var(--p);mix-blend-mode:difference;background:linear-gradient(to bottom,rgba(0,0,0,.6),transparent)}
+    .m-nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:22px var(--p);background:linear-gradient(to bottom,rgba(0,0,0,.9) 0%,rgba(0,0,0,.5) 60%,transparent 100%)}
     .m-id{font-size:9px;letter-spacing:.15em;color:#fff}
     .m-cls{background:none;border:none;font-family:var(--f);font-size:10px;letter-spacing:.18em;color:#fff}
     .m-cls:hover{opacity:.6}
     .m-body{display:flex;width:100%;min-height:100vh}
-    .m-photo{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:#000;padding:60px 20px 40px;min-height:100vh}
-    .m-photo img{max-width:100%;max-height:calc(100vh - 100px);width:auto;height:auto;object-fit:contain;opacity:0;transition:opacity .4s}
+    .m-photo{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:#000;padding:80px 40px 60px;min-height:100vh}
+    .m-photo img{max-width:min(100%,600px);max-height:calc(100vh - 160px);width:auto;height:auto;object-fit:contain;opacity:0;transition:opacity .4s}
     .m-photo img.ld{opacity:1}
     .m-tap{position:absolute;top:0;bottom:0;width:40%;z-index:5;border:none;background:none}
     .m-tap.l{left:0}
@@ -146,8 +147,8 @@
     @media(max-width:800px){
       .m-body{flex-direction:column;min-height:auto}
       .m-photo{min-height:auto;height:auto;padding:70px 12px 20px;flex:none}
-      .m-photo img{max-height:none;width:100%;height:auto}
-      .m-tap{width:50%;height:auto;top:70px;bottom:auto;aspect-ratio:2/5}
+      .m-photo img{max-height:75vh;max-width:100%;width:auto;height:auto}
+      .m-tap{width:50%;height:auto;top:70px;bottom:20px;aspect-ratio:auto}
       .m-spec{width:100%;border-left:none;border-top:1px solid var(--ln);padding:30px var(--p) 60px}
       .m-spec-title{font-size:18px;font-family:var(--d);font-weight:200;letter-spacing:.02em;margin-bottom:24px}
     }
@@ -203,22 +204,26 @@
     @media(max-width:600px){.ad-meta{gap:14px}.ad-meta span{padding-right:0}}
 
     /* ═══════════════════════════════════════════════════════
-       ARCHIVE DETAIL — layout editoriale in stile studionatale.
-       Foto grandi a piena larghezza, una sotto l'altra.
-       Ogni foto mantiene il suo ratio naturale = niente tagli.
+       ARCHIVE DETAIL — layout editoriale.
+       Foto e video con altezza controllata (max 90vh) e
+       larghezza automatica → mantengono ratio, non si stirano.
+       Foto verticali stanno strette al centro, orizzontali
+       piene larghezza. Su mobile piena larghezza sempre.
        ═══════════════════════════════════════════════════════ */
-    .ad-stack{display:flex;flex-direction:column;gap:2px;background:#000}
+    .ad-stack{display:flex;flex-direction:column;gap:2px;background:#000;padding-bottom:80px}
     .ad-media{
       width:100%;
       background:#000;
       display:flex;
       align-items:center;
       justify-content:center;
+      padding:0 var(--p);
     }
     .ad-media img,
     .ad-media video{
-      width:100%;
       max-width:100%;
+      max-height:90vh;
+      width:auto;
       height:auto;
       display:block;
       opacity:0;
@@ -226,8 +231,10 @@
     }
     .ad-media img.ld,
     .ad-media video{opacity:1}
-    /* Su mobile teniamo lo stesso stile — le foto verticali
-       occupano tutta la larghezza e si vede tutto */
+    @media(max-width:700px){
+      .ad-media{padding:0}
+      .ad-media img,.ad-media video{width:100%;max-height:none}
+    }
 
     /* SPECIAL PROJECTS */
     #special{overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -355,7 +362,7 @@ const IG = 'theofanfoni';
 const PROJECTS = [
   { folder:'permeabile', prefix:'permeabile', name:'PERMEABILE',
     meta:['_PERMEABILE','VIDEO PERFORMANCE','ART DIRECTION','2025'],
-    imgs:10, video:{ file:'permeabile11.mp4', afterImg:10 } },
+    imgs:1, video:{ file:'permeabile11.mp4', afterImg:1 } },
 
   { folder:'fenced_city', prefix:'fenced_city', name:'FENCED CITY CAPSULE COLLECTION',
     meta:['_FENCED CITY','CAPSULE COLLECTION','ART DIRECTION / FASHION DESIGN','ROMA \'25'],
@@ -372,10 +379,6 @@ const PROJECTS = [
   { folder:'trittico', prefix:'trittico', name:'TRITTICO',
     meta:['_TRITTICO','ART DIRECTION','2024'],
     imgs:9 },
-
-  { folder:'occhi', prefix:'occhi', name:'SOLO PER GLI OCCHI',
-    meta:['_SOLO PER GLI OCCHI','BRAND IDENTITY','2024'],
-    imgs:0 },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -514,7 +517,7 @@ function renderSpecs(look){
     if(it.col) h += `<br>COLOR: ${it.col}`;
     h += `</div>`;
   });
-  h += `<button class="m-order ct" onclick="orderThisLook()"><span>ORDER THIS LOOK</span><span class="ar">&#8594;</span></button>`;
+  h += `<button class="m-order ct" onclick="orderThisLook()"><span>PRIVATE ORDER</span><span class="ar">&#8594;</span></button>`;
   document.getElementById('mSpec').innerHTML = h;
   addHover();
 }
