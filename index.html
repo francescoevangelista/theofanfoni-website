@@ -206,8 +206,9 @@
     /* ═══════════════════════════════════════════════════════
        ARCHIVE DETAIL — griglia a 2 colonne su desktop,
        1 colonna su mobile. Foto contenute in altezza.
+       .wide → foto occupa entrambe le colonne (piena larghezza)
        ═══════════════════════════════════════════════════════ */
-    .ad-stack{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#000;padding-bottom:60px}
+    .ad-stack{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#000}
     @media(max-width:700px){.ad-stack{grid-template-columns:1fr}}
     .ad-media{
       width:100%;
@@ -217,20 +218,27 @@
       justify-content:center;
       overflow:hidden;
     }
+    .ad-media.wide{grid-column:1/-1}
     .ad-media img,
     .ad-media video{
       max-width:100%;
-      max-height:80vh;
+      max-height:85vh;
       width:auto;
       height:auto;
       display:block;
       opacity:0;
-      transition:opacity .8s;
+      transition:opacity .6s;
     }
     .ad-media img.ld,
     .ad-media video{opacity:1}
+    /* Le foto "wide" possono essere più grandi visto che hanno
+       tutta la larghezza disponibile — max 90vh per contenere
+       le foto orizzontali senza far scomparire il footer */
+    .ad-media.wide img,
+    .ad-media.wide video{max-height:90vh;width:100%;object-fit:cover;max-width:none}
     @media(max-width:700px){
       .ad-media img,.ad-media video{width:100%;max-height:none}
+      .ad-media.wide img,.ad-media.wide video{object-fit:contain;max-height:70vh}
     }
 
     /* SPECIAL PROJECTS */
@@ -246,7 +254,7 @@
     .sp-empty{padding:60px var(--p);font-size:10px;letter-spacing:.15em;color:var(--ft);text-align:center}
 
     /* FOOTER */
-    #footer{padding:80px var(--p) 40px;border-top:1px solid var(--ln);margin-top:60px}
+    #footer{padding:80px var(--p) 40px;border-top:1px solid var(--ln)}
     .ft-title{font-size:9px;letter-spacing:.2em;color:var(--dm);margin-bottom:30px}
     .ft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
     @media(max-width:700px){.ft-grid{grid-template-columns:1fr}}
@@ -357,26 +365,38 @@ const IG = 'theofanfoni';
 // ═══════════════════════════════════════════════════════════
 //  PROGETTI ARCHIVIO
 // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  PROGETTI ARCHIVIO
+//  Ogni progetto ha una lista ESPLICITA di file.
+//  firstWide=true → la prima foto occupa tutta la larghezza,
+//                   le successive stanno a 2 a 2.
+// ═══════════════════════════════════════════════════════════
 const PROJECTS = [
-  { folder:'permeabile', prefix:'permeabile', name:'PERMEABILE',
+  { folder:'permeabile', name:'PERMEABILE',
     meta:['_PERMEABILE','VIDEO PERFORMANCE','ART DIRECTION','2025'],
-    imgs:1, video:{ file:'permeabile11.mp4', afterImg:1 } },
+    files:['permeabile1.jpg'],
+    video:'permeabile11.mp4',
+    firstWide:true },
 
-  { folder:'fenced_city', prefix:'fenced_city', name:'FENCED CITY CAPSULE COLLECTION',
+  { folder:'fenced_city', name:'FENCED CITY CAPSULE COLLECTION',
     meta:['_FENCED CITY','CAPSULE COLLECTION','ART DIRECTION / FASHION DESIGN','ROMA \'25'],
-    imgs:12 },
+    files:['fenced_city_1.jpg','fenced_city7.jpg','fenced_city9.jpg','fenced_city10.jpg','fenced_city11.jpg'],
+    firstWide:true },
 
-  { folder:'uriel', prefix:'uriel', name:'URIEL',
+  { folder:'uriel', name:'URIEL',
     meta:['_URIEL','FASHION DESIGN','2024'],
-    imgs:3 },
+    files:['uriel_1.jpg'],
+    firstWide:true },
 
-  { folder:'studio4', prefix:'studio', name:'ST.4 SHOWROOM',
+  { folder:'studio4', name:'ST.4 SHOWROOM',
     meta:['_ST.4','SHOWROOM DIRECTION','ROMA'],
-    imgs:5 },
+    files:['studio1.jpg','studio2.jpg','studio3.jpg','studio4.jpg','studio5.jpg'],
+    firstWide:true },
 
-  { folder:'trittico', prefix:'trittico', name:'TRITTICO',
+  { folder:'trittico', name:'TRITTICO',
     meta:['_TRITTICO','ART DIRECTION','2024'],
-    imgs:9 },
+    files:['trittico1.jpg','trittico2.jpg','trittico3.jpg','trittico4.jpg','trittico5.jpg','trittico6.jpg'],
+    firstWide:false },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -599,20 +619,25 @@ function openDetail(p){
   meta.innerHTML = p.meta.map(m => `<span>${m}</span>`).join('');
   stack.innerHTML = '';
 
-  if(p.imgs === 0 && !p.video){
-    stack.innerHTML = `<div style="padding:100px var(--p);text-align:center;font-size:10px;letter-spacing:.15em;color:var(--ft)">COMING SOON</div>`;
+  const files = p.files || [];
+  const hasContent = files.length > 0 || p.video;
+
+  if(!hasContent){
+    stack.innerHTML = `<div style="grid-column:1/-1;padding:100px var(--p);text-align:center;font-size:10px;letter-spacing:.15em;color:var(--ft)">COMING SOON</div>`;
   } else {
-    for(let i = 1; i <= p.imgs; i++){
+    files.forEach((filename, i) => {
       const d = document.createElement('div');
-      d.className = 'ad-media';
-      d.innerHTML = `<img data-src="${p.folder}/${p.prefix}${i}.jpg" alt="${p.name} ${i}">`;
+      // Prima foto larga se firstWide=true, altrimenti tutte a 2 colonne
+      const isWide = (p.firstWide && i === 0);
+      d.className = 'ad-media' + (isWide ? ' wide' : '');
+      d.innerHTML = `<img data-src="${p.folder}/${filename}" alt="${p.name} ${i+1}">`;
       stack.appendChild(d);
-    }
-    // Video di chiusura (es. permeabile11.mp4)
+    });
+    // Video di chiusura (es. permeabile11.mp4) — sempre wide
     if(p.video){
       const v = document.createElement('div');
-      v.className = 'ad-media';
-      v.innerHTML = `<video autoplay muted loop playsinline preload="metadata"><source src="${p.folder}/${p.video.file}" type="video/mp4"></video>`;
+      v.className = 'ad-media wide';
+      v.innerHTML = `<video autoplay muted loop playsinline preload="metadata" controls><source src="${p.folder}/${p.video}" type="video/mp4"></video>`;
       stack.appendChild(v);
     }
   }
