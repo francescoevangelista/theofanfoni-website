@@ -243,11 +243,25 @@
     }
     .ad-media img.ld,
     .ad-media video{opacity:1}
-    /* Le foto "wide" possono essere più grandi visto che hanno
-       tutta la larghezza disponibile — max 90vh per contenere
-       le foto orizzontali senza far scomparire il footer */
-    .ad-media.wide img,
-    .ad-media.wide video{max-height:90vh;width:100%;object-fit:cover;max-width:none}
+    /* Le foto "wide" riempiono tutta la larghezza — cover funziona
+       bene per le foto orizzontali di collezione */
+    .ad-media.wide img{max-height:90vh;width:100%;object-fit:cover;max-width:none}
+    /* I VIDEO wide invece devono usare CONTAIN con sfondo nero,
+       perché con cover si allargano tagliando i lati e creando
+       quell'effetto zoomato/sfocato che non piace a Theo.
+       Il contenitore stesso ha sfondo nero, quindi le bande
+       laterali sono coerenti con il resto del sito. */
+    .ad-media.wide video{
+      width:100%;
+      max-width:100%;
+      height:70vh;
+      max-height:80vh;
+      object-fit:contain;
+      background:#000;
+    }
+    @media(max-width:700px){
+      .ad-media.wide video{height:auto;max-height:60vh}
+    }
     @media(max-width:700px){
       .ad-media img,.ad-media video{width:100%;max-height:none}
       .ad-media.wide img,.ad-media.wide video{object-fit:contain;max-height:70vh}
@@ -383,7 +397,24 @@
 <script>
 // ═════════ CONFIG ═════════
 const LOOK_DIR = 'looks/';
-const LOOK_IDS = [1,2,3,4,6,7,8,9,10,11,12,13,14]; // 05 = duplicate of 02
+// LOOKS: numero visualizzato (01-13, sequenziale) + numero del file su disco
+// I file sono look01, look02, look03, look04, look06, ... look14 (05 saltato)
+// Ma nell'interfaccia mostro 01, 02, 03, 04, 05, 06, ... 13 (sequenziale)
+const LOOKS = [
+  { display:1,  file:1  },
+  { display:2,  file:2  },
+  { display:3,  file:3  },
+  { display:4,  file:4  },
+  { display:5,  file:6  },
+  { display:6,  file:7  },
+  { display:7,  file:8  },
+  { display:8,  file:9  },
+  { display:9,  file:10 },
+  { display:10, file:11 },
+  { display:11, file:12 },
+  { display:12, file:13 },
+  { display:13, file:14 },
+];
 const PHOTOS_PER_LOOK = 5;
 const IG = 'theofanfoni';
 
@@ -426,6 +457,8 @@ const PROJECTS = [
 
 // ═══════════════════════════════════════════════════════════
 //  SPECIFICHE LOOK — testi ufficiali di Theo
+//  Le chiavi sono i numeri dei FILE (originali di Theo),
+//  non i display number. Es: file 6 = Look 05 sul sito.
 // ═══════════════════════════════════════════════════════════
 const SPECS = {
   1:[
@@ -533,28 +566,35 @@ function lazyLoad(scope){
 }
 
 // ══ LOOKBOOK ══
+// display = numero visualizzato all'utente (01, 02, 03... sequenziale)
+// file = numero del file su disco (può saltare il 05)
 const lbGrid = document.getElementById('lbGrid');
-LOOK_IDS.forEach(id => {
-  const nn = String(id).padStart(2,'0');
+LOOKS.forEach(look => {
+  const displayN = String(look.display).padStart(2,'0');
+  const fileN = String(look.file).padStart(2,'0');
   const d = document.createElement('div');
   d.className = 'lk ct';
-  d.innerHTML = `<img data-src="${LOOK_DIR}look${nn}-1.jpg" alt="Look ${nn}"><div class="lk-n">${nn}</div>`;
-  d.addEventListener('click', () => openModal(id));
+  d.innerHTML = `<img data-src="${LOOK_DIR}look${fileN}-1.jpg" alt="Look ${displayN}"><div class="lk-n">${displayN}</div>`;
+  d.addEventListener('click', () => openModal(look.display));
   lbGrid.appendChild(d);
 });
 
 // ══ MODAL LOOKBOOK ══
-let curLook = 1, curPhoto = 1;
-function openModal(look){
-  curLook = look; curPhoto = 1;
+// curDisplay = 1-13 (indice mostrato)
+// per trovare il file corrispondente: LOOKS[curDisplay-1].file
+let curDisplay = 1, curPhoto = 1;
+function openModal(displayN){
+  curDisplay = displayN; curPhoto = 1;
   document.getElementById('modal').classList.add('on');
-  renderSpecs(look);
+  renderSpecs();
   buildDots();
   showPhoto();
 }
-function renderSpecs(look){
-  const items = SPECS[look] || [];
-  let h = `<div class="m-spec-title">LOOK ${String(look).padStart(2,'0')}</div>`;
+function renderSpecs(){
+  const look = LOOKS[curDisplay - 1];
+  const items = SPECS[look.file] || [];
+  const displayNN = String(curDisplay).padStart(2,'0');
+  let h = `<div class="m-spec-title">LOOK ${displayNN}</div>`;
   items.forEach(it => {
     h += `<div class="m-spec-item"><div class="m-spec-name">${it.name}</div>${it.mat}`;
     if(it.col) h += `<br>COLOR: ${it.col}`;
@@ -578,25 +618,25 @@ function buildDots(){
   }
 }
 function showPhoto(){
-  const nn = String(curLook).padStart(2,'0');
+  const look = LOOKS[curDisplay - 1];
+  const fileNN = String(look.file).padStart(2,'0');
+  const displayNN = String(curDisplay).padStart(2,'0');
   const img = document.getElementById('mImg');
   img.classList.remove('ld');
   img.onload = () => img.classList.add('ld');
   img.onerror = () => { img.style.opacity = 0; };
-  img.src = `${LOOK_DIR}look${nn}-${curPhoto}.jpg`;
-  document.getElementById('mId').textContent = `LOOK ${nn}  /  ${curPhoto} OF ${PHOTOS_PER_LOOK}`;
+  img.src = `${LOOK_DIR}look${fileNN}-${curPhoto}.jpg`;
+  document.getElementById('mId').textContent = `LOOK ${displayNN}  /  ${curPhoto} OF ${PHOTOS_PER_LOOK}`;
   document.querySelectorAll('.m-dot').forEach((d,i) => d.classList.toggle('on', i === curPhoto - 1));
 }
 function shiftPhoto(dir){
   curPhoto += dir;
   if(curPhoto > PHOTOS_PER_LOOK){
-    const idx = LOOK_IDS.indexOf(curLook);
-    curLook = LOOK_IDS[(idx + 1) % LOOK_IDS.length];
-    curPhoto = 1; renderSpecs(curLook); buildDots();
+    curDisplay = (curDisplay % LOOKS.length) + 1;
+    curPhoto = 1; renderSpecs(); buildDots();
   } else if(curPhoto < 1){
-    const idx = LOOK_IDS.indexOf(curLook);
-    curLook = LOOK_IDS[(idx - 1 + LOOK_IDS.length) % LOOK_IDS.length];
-    curPhoto = PHOTOS_PER_LOOK; renderSpecs(curLook); buildDots();
+    curDisplay = ((curDisplay - 2 + LOOKS.length) % LOOKS.length) + 1;
+    curPhoto = PHOTOS_PER_LOOK; renderSpecs(); buildDots();
   }
   showPhoto();
 }
