@@ -55,6 +55,18 @@
     .ml:hover{opacity:.4}
     .mi{font-family:var(--f);font-size:9px;letter-spacing:.1em;color:var(--ft);vertical-align:super;margin-right:16px}
 
+    /* CONTACTS in fondo al menu */
+    .menu-contacts{
+      position:absolute;bottom:32px;left:var(--p);right:var(--p);
+      opacity:0;transition:opacity .5s .3s;
+    }
+    #menu.on .menu-contacts{opacity:1}
+    .mc-label{font-size:9px;letter-spacing:.2em;color:var(--dm);margin-bottom:16px}
+    .mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:10px;letter-spacing:.1em;line-height:1.9}
+    .mc-grid a{color:var(--wh);text-decoration:none;transition:opacity .2s}
+    .mc-grid a:hover{opacity:.5}
+    @media(max-width:600px){.mc-grid{grid-template-columns:1fr;gap:14px}.menu-contacts{bottom:20px}}
+
     /* SECTIONS */
     .sec{position:fixed;inset:0;opacity:0;pointer-events:none;transition:opacity .5s;overflow:hidden}
     .sec.on{opacity:1;pointer-events:all;z-index:10}
@@ -280,6 +292,19 @@
     <div class="mr"><button class="ml ct" onclick="navTo('po')"><span class="mi">02</span>PRIVATE ORDER</button></div>
     <div class="mr"><button class="ml ct" onclick="navTo('archive')"><span class="mi">03</span>ARCHIVE</button></div>
     <div class="mr"><button class="ml ct" onclick="navTo('special')"><span class="mi">04</span>SPECIAL PROJECTS</button></div>
+    <div class="menu-contacts">
+      <div class="mc-label">CONTACTS</div>
+      <div class="mc-grid">
+        <div>
+          <a href="mailto:theofanfoni@hotmail.com">THEOFANFONI@HOTMAIL.COM</a><br>
+          <a href="mailto:studio.statilia4@gmail.com">STUDIO.STATILIA4@GMAIL.COM</a>
+        </div>
+        <div>
+          <a href="https://instagram.com/theofanfoni" target="_blank">@THEOFANFONI</a><br>
+          <a href="https://www.instagram.com/st.udio.4/" target="_blank">@ST.UDIO.4</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <section class="sec on" id="home">
@@ -322,7 +347,7 @@
       <div class="po-t">EACH PIECE IS MADE TO ORDER. FABRICS ARE SELECTED, MEASUREMENTS ARE TAKEN, AND EVERY DETAIL IS DECIDED TOGETHER TO CREATE A ONE-OF-ONE GARMENT MADE EXCLUSIVELY FOR YOU.</div>
       <div class="po-links">
         <a href="https://instagram.com/theofanfoni" target="_blank" class="po-btn ct"><span>WRITE ON INSTAGRAM</span><span class="ar">&#8594;</span></a>
-        <a href="mailto:info@teofanfoni.com" class="po-btn ct"><span>INFO@TEOFANFONI.COM</span><span class="ar">&#8594;</span></a>
+        <a href="mailto:theofanfoni@hotmail.com" class="po-btn ct"><span>THEOFANFONI@HOTMAIL.COM</span><span class="ar">&#8594;</span></a>
       </div>
     </div>
   </section>
@@ -380,12 +405,12 @@ const PROJECTS = [
 
   { folder:'fenced_city', name:'FENCED CITY CAPSULE COLLECTION',
     meta:['_FENCED CITY','CAPSULE COLLECTION','ART DIRECTION / FASHION DESIGN','ROMA \'25'],
-    files:['fenced_city_1.jpg','fenced_city7.jpg','fenced_city9.jpg','fenced_city10.jpg','fenced_city11.jpg'],
-    firstWide:true },
+    files:['fenced_city7.jpg','fenced_city9.jpg','fenced_city10.jpg','fenced_city11.jpg','fenced_city_1.jpg'],
+    lastWide:true },
 
   { folder:'uriel', name:'URIEL',
     meta:['_URIEL','FASHION DESIGN','2024'],
-    files:['uriel_1.jpg'],
+    files:['uriel_1.jpg','uriel1.jpg','uriel2.jpg','uriel3.jpg'],
     firstWide:true },
 
   { folder:'studio4', name:'ST.4 SHOWROOM',
@@ -627,8 +652,9 @@ function openDetail(p){
   } else {
     files.forEach((filename, i) => {
       const d = document.createElement('div');
-      // Prima foto larga se firstWide=true, altrimenti tutte a 2 colonne
-      const isWide = (p.firstWide && i === 0);
+      // firstWide: prima foto piena larghezza
+      // lastWide:  ultima foto piena larghezza
+      const isWide = (p.firstWide && i === 0) || (p.lastWide && i === files.length - 1);
       d.className = 'ad-media' + (isWide ? ' wide' : '');
       d.innerHTML = `<img data-src="${p.folder}/${filename}" alt="${p.name} ${i+1}">`;
       stack.appendChild(d);
@@ -656,17 +682,18 @@ function buildFooter(){
       <div class="ft-grid">
         <div class="ft-col">
           <div class="ft-label">STUDIO</div>
-          VIA STATILIA 4<br>ROMA
+          BASED IN<br>
+          VIA STATILIA 4, ROME<br>
+          <a href="mailto:studio.statilia4@gmail.com">STUDIO.STATILIA4@GMAIL.COM</a>
         </div>
         <div class="ft-col">
           <div class="ft-label">CONNECT</div>
-          <a href="https://wa.me/" target="_blank">WHATSAPP</a><br>
-          <a href="mailto:info@teofanfoni.com">INFO@TEOFANFONI.COM</a>
+          <a href="mailto:theofanfoni@hotmail.com">THEOFANFONI@HOTMAIL.COM</a>
         </div>
         <div class="ft-col">
-          <div class="ft-label">FOLLOW</div>
-          <a href="https://instagram.com/${IG}" target="_blank">INSTAGRAM</a><br>
-          <a href="https://www.instagram.com/st.udio.4/" target="_blank">ST.UDIO.4 INSTAGRAM</a>
+          <div class="ft-label">SOCIAL</div>
+          <a href="https://instagram.com/theofanfoni" target="_blank">@THEOFANFONI</a><br>
+          <a href="https://www.instagram.com/st.udio.4/" target="_blank">@ST.UDIO.4</a>
         </div>
       </div>
     </div>`;
