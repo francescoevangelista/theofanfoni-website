@@ -441,7 +441,8 @@ const PROJECTS = [
 
   { folder:'uriel', name:'URIEL',
     meta:['_URIEL','FASHION DESIGN','2024'],
-    files:['uriel_1.jpg','uriel1.jpg','uriel2.jpg','uriel3.jpg'],
+    files:['uriel_1.jpg'],
+    filesMobile:['uriel1.jpg','uriel2.jpg','uriel3.jpg'],
     firstWide:true },
 
   { folder:'studio4', name:'ST.4 SHOWROOM',
@@ -684,7 +685,10 @@ function openDetail(p){
   meta.innerHTML = p.meta.map(m => `<span>${m}</span>`).join('');
   stack.innerHTML = '';
 
-  const files = p.files || [];
+  // Se il progetto ha una versione specifica per mobile,
+  // la usiamo quando siamo sotto i 700px
+  const isMobile = window.matchMedia('(max-width:700px)').matches;
+  const files = (isMobile && p.filesMobile) ? p.filesMobile : (p.files || []);
   const hasContent = files.length > 0 || p.video;
 
   if(!hasContent){
